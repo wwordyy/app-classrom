@@ -1,9 +1,8 @@
-const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcryptjs");
 const { generatedRememberToken } = require("../util/tokens");
 
 
-const prisma = new PrismaClient();
+const prisma = require('../prisma/client')
 
 class AuthService {
 
@@ -26,11 +25,9 @@ class AuthService {
                 email: email,
                 passwordHash: hashedPswd,
                 fullName: fullName,
-                avatarUrl: null,
                 isActive: true,
-                group: null,
                 role: {
-                    connect: { title: "student" }
+                    connect: { title: "observer" }
                 }
             }
 
@@ -48,7 +45,8 @@ class AuthService {
     async login(email, password){
 
         const user = await prisma.user.findUnique({
-            where: {email: email}
+            where: {email: email},
+            include: {role: true}
         });
 
         if (!user || !await bcrypt.compare(password, user.passwordHash)){
@@ -57,18 +55,13 @@ class AuthService {
 
         const payload = {
             id: user.id,
-            email: user.email
+            role: user.role.title,
         }
 
         const token = generatedRememberToken(payload);
 
         return {
-            token,
-            user: {
-                id: user.id,
-                email: user.email
-            }
-
+            token
         }
 
 
