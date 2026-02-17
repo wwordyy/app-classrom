@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import logoClassrom from '../../assets/icons/logoClassrom.png'
 
-import { ApiLogin } from '../../api/auth/login'
+import { apiLogin } from '../../api/auth/login'
 import { useNavigate } from 'react-router-dom';
 
 export  function Login() {
@@ -26,10 +26,9 @@ export  function Login() {
         }
 
         try {  
-            const response = await ApiLogin(dataToSent);
-            // navigate("/home")
+            await apiLogin(dataToSent);
+            navigate("/home")
 
-            console.log(response)
 
         } catch (e: any) {
             setError(e.message);

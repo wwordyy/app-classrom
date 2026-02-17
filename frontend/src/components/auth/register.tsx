@@ -1,4 +1,4 @@
-import { use, useState } from 'react';
+import { useState } from 'react';
 import logoClassrom from '../../assets/icons/logoClassrom.png'
 
 import { ApiRegister } from '../../api/auth/register'
@@ -136,7 +136,8 @@ export  function Register() {
                 <button
                     type="button"
                     onClick={() => navigate('/login')}
-                    className="text-sm text-[#8ab4f8] hover:text-[#aecbfa] font-medium underline transition-colors"
+                    className="text-sm text-[#8ab4f8] hover:text-[#aecbfa] 
+                                            font-medium underline transition-colors"
                     >
                     Уже есть аккаунт? Войти
                 </button>
