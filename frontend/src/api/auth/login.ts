@@ -15,7 +15,7 @@ interface ResponseSucessLogin {
 
 const URL_BACKEND = "/api/auth";
 
-export async function ApiLogin(data: RequestLogin) {
+export async function apiLogin(data: RequestLogin) {
 
     const response = await fetch(`${URL_BACKEND}/login`, {
         method: "POST",
@@ -35,3 +35,18 @@ export async function ApiLogin(data: RequestLogin) {
 
         return responseData;    
 }    
+
+
+export async function  apiLogout() {
+
+    const response = await fetch(`${URL_BACKEND}/logout`, {
+        method: "POST",
+        credentials: "include",
+    })
+
+    if (response.ok) {
+        return true;
+    }
+    
+    return false
+}
