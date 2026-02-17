@@ -60,8 +60,6 @@ class AuthController {
 
             return res.json({
                 accessToken: result.token,
-                user: result.user
-
             })
 
         } catch (e) {
@@ -73,6 +71,23 @@ class AuthController {
         }
 
     } 
+
+
+    async logout(req, res) {
+
+        res.clearCookie("accessToken", {
+            httpOnly: true, 
+            secure: false,
+            sameSite: "lax",
+            maxAge: 0,
+            path: '/'
+    })        
+
+    res.status(200).json({
+        ok: true
+    })
+
+    }
 
 }
 
