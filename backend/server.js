@@ -19,6 +19,8 @@ app.use(cors({
 app.use('/api/auth', require('./routers/authRouter'));
 app.use('/api', require('./routers/dashboardRouter'));
 app.use('/api', require('./routers/userRouter'));
+app.use('/api', require('./routers/streamRouter'));
+app.use('/api', require('./routers/groupRouter'));
 
 
 
