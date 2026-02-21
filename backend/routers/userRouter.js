@@ -8,6 +8,6 @@ const authMiddleware = require ('../middleware/authMiddleware');
 
 
 router.get("/me", authMiddleware, userController.getMe);
-
+router.get('/users/by-role', authMiddleware, userController.getUsersByRole)
 
 module.exports  = router;

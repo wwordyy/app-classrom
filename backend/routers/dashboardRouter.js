@@ -9,11 +9,14 @@ const dashboardController = require('../controllers/dashboardController')
 router.get("/dashboard/overview", authMiddleware, roleMiddleware(['observer']), 
                 dashboardController.getOverview);
 
-router.get("/dashboard/groups", authMiddleware, roleMiddleware(['observer']), 
+router.get("/dashboard/groups/stats", authMiddleware, roleMiddleware(['observer']), 
                 dashboardController.getGroupsSubmissionsSubmitted);
 
 router.get("/dashboard/submissions", authMiddleware, roleMiddleware(['observer']), 
                 dashboardController.getSubmissionStats);
 
+router.get("/dashboard/groups", authMiddleware, roleMiddleware(['observer']), 
+                dashboardController.getGroupsOverview);
 
+                
 module.exports = router;
