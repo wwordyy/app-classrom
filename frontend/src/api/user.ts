@@ -1,9 +1,7 @@
 import { type ResponseError, type User } from '../types/types'
 
 
-interface ResponseSucessUser {
-    user: User
-}
+
 
 
 export async function apiGetMe() {
@@ -13,14 +11,33 @@ export async function apiGetMe() {
         credentials: "include"
     })
 
-    const responseData: ResponseSucessUser | ResponseError = await response.json();
+    const responseData: User | ResponseError = await response.json();
 
     if (!response.ok) {
         throw new Error((responseData as ResponseError).error || "Ошибка получения данных!")
     }
 
-    return (responseData as ResponseSucessUser);
+    return (responseData as User);
 
     
 }
 
+
+export async function apiGetUsersByRole(role: string) {
+
+    const response = await fetch(`/api/users/by-role?role=${role}`, {
+        method: "GET",
+        credentials: "include",    
+    })
+
+    const responseData: User[] | ResponseError = await response.json();
+
+    if (!response.ok) {
+        throw new Error((responseData as ResponseError).error || "Ошибка получения данных!")
+    }
+
+    return (responseData as User[]);
+    
+
+
+}
