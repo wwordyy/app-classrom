@@ -57,6 +57,25 @@ class DashboardController {
     }
 
 
+    async getGroupsOverview(req, res) {
+
+        try{
+
+            const result = await dashboardService.getGroupsOverview();
+
+            res.status(200).json(result);
+
+
+        } catch(e) {
+
+            res.status(400).json({
+                error: e.message
+            })
+        }
+
+    }
+
+
 
 }
 
