@@ -21,6 +21,7 @@ app.use('/api', require('./routers/dashboardRouter'));
 app.use('/api', require('./routers/userRouter'));
 app.use('/api', require('./routers/streamRouter'));
 app.use('/api', require('./routers/groupRouter'));
+app.use('/api', require('./routers/chatRouter'));
 
 
 
