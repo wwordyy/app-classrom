@@ -1,26 +1,24 @@
 import { useEffect, useState } from "react";
+import { AsideBlock } from '../observer/aside'
+import { DashboardHeader } from './header'
+
 import { apiGetOverview, apiGetGroupStats, apiGetSubmissionStats } from "../../api/dashboard";
 import { apiGetMe  } from '../../api/user'
-import { apiLogout } from '../../api/auth/login'
 
 import { GroupsChart } from '../observer/graphs/groupsChat'
 
 
-import { type User } from '../../types/types'
 import { type GroupStats} from '../observer/types/observerTypes'
-import { useNavigate } from "react-router-dom";
 
 
 
 export  function Dashboard() {
 
-  const navigate = useNavigate();
 
   const [ totalGroups, setTotalGroups ] = useState(0);
   const [ totalStudents, setTotalStudents ] = useState(0);
   const [ totalTeachers, setTotalTeachers ] = useState(0); 
 
-  const [ user, setUser ] = useState< User | null> (null);
   const [ groupsStats, setGroupsStats ] =  useState <GroupStats[]>([]);
 
   const [percentLate, setPercentLate] = useState(0);
@@ -43,57 +41,27 @@ export  function Dashboard() {
 
       setGroupsStats(responseGroupsStats);
 
-      setUser(responseUser.user)
+      localStorage.setItem("userFullName", responseUser.fullName)
+
       setTotalGroups(result.totalGroups);
       setTotalTeachers(result.totalTeachers);
-      setTotalStudents(result.totalTeachers);
+      setTotalStudents(result.totalStudents);
       
     };
 
     fetchData();
   }, []);
 
-  async function handleLogout () {
-
-    const ok =  await apiLogout()
-
-    if (ok) {
-      navigate('/login')
-    }
-    
-  }
 
   return (
 
     <div className="min-h-screen bg-gray-100 flex">
 
-
-      <aside className="w-64 bg-white shadow-lg p-6">
-        <h2 className="text-xl font-bold mb-8">Панель наблюдателя</h2>
-
-        <nav className="space-y-4">
-          <a href="#" className="block text-gray-700 hover:text-blue-600">Главная</a>
-          <a href="#" className="block text-gray-700 hover:text-blue-600">Группы</a>
-          <a href="#" className="block text-gray-700 hover:text-blue-600">Преподаватели</a>
-          <a href="#" className="block text-gray-700 hover:text-blue-600">Аналитика</a>
-          <a href="#" className="block text-gray-700 hover:text-blue-600">Чаты</a>
-          <a href="#" className="block text-gray-700 hover:text-blue-600">Отчёты</a>
-        </nav>
-      </aside>
-
+      <AsideBlock/>
 
       <main className="flex-1 p-8">
 
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-
-          <div className="flex items-center gap-4">
-            <span className="text-gray-600">{user?.fullName}</span>
-            <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onClick={handleLogout}>
-              Выйти
-            </button>
-          </div>
-        </div>
+        <DashboardHeader namePage="Главная"/>
 
         <div className="grid grid-cols-4 gap-6 mb-10">
           <div className="bg-white p-6 rounded-2xl shadow">
