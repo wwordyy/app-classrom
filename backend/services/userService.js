@@ -11,6 +11,7 @@ class UserService {
                 id: true,
                 fullName: true,
                 email: true,
+                avatarUrl: true,
                 role: {
                     select: { title: true }
                 }
@@ -18,6 +19,36 @@ class UserService {
         })
 
         return user;
+    }
+
+    async getUsersByRole(roleName) {
+
+        if (!roleName) {
+            throw new Error("Название роли обязательный параметр!");
+        }
+
+        const users = await prisma.user.findMany({
+            where: {
+                role: {
+                    title: roleName,
+                },
+                isActive: true
+            },
+            select: {
+                id: true,
+                fullName: true,
+                email:  true,
+                avatarUrl: true,
+                role: {
+                    select: {
+                        title: true,
+                    }
+                } 
+            }
+        })
+
+        return users;
+
     }
 }
 

@@ -16,6 +16,7 @@ class DashboardService {
         })
         
 
+
         return {
             totalGroups,
             totalTeachers,
@@ -175,6 +176,56 @@ class DashboardService {
     }
 
     
+    async getGroupsOverview () {
+        const groups = await prisma.group.findMany({
+            select: {
+                id: true,
+                name: true,
+                courseYear: true,
+                users: {
+                    where: { role: {title: "student"} },
+                    select: { id: true}
+                },
+                streams: {
+                    select: {
+                        stream: {
+                            select: {
+                                teacher: {
+                                    select: {
+                                        id: true, 
+                                        fullName: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        });
+
+        return groups.map(group => {
+
+            const teachersMap = new Map();
+
+            group.streams.forEach(sg => {
+                const teacher = sg.stream.teacher;
+                teachersMap.set(teacher.id, teacher);
+
+            })
+
+            return {
+                id: group.id,
+                name: group.name,
+                courseYear: group.courseYear,
+                studentsCount: group.users.length,
+                teachers: Array.from(teachersMap.values())
+
+            }
+
+        })
+
+    }
 
 }
 
