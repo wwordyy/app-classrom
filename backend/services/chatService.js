@@ -7,33 +7,56 @@ class ChatService {
 
     async createChat(teacherId, observerId) {
 
-        const existing = await prisma.chatUser.findFirst({
+
+        const observerChats = await prisma.chatUser.findMany({
+        where: { userId: observerId },
+        select: { chatId: true }
+    });
+
+    const chatIds = observerChats.map(c => c.chatId);
+
+    const existing = await prisma.chatUser.findFirst({
         where: {
-            userId: observerId,
-            chat: {
-                users: {
-                    some: { userId: teacherId }
-                }
-            }
+            userId: teacherId,
+            chatId: { in: chatIds }
         }
     });
 
-        if (existing) {
-            return existing.chatId;
-        }
-
-        const chat = await prisma.chat.create({
-            data: {
+    if (existing) {
+        const chat = await prisma.chat.findUnique({
+            where: { id: existing.chatId },
+            include: {
                 users: {
-                    create: [
-                        { userId: observerId },
-                        { userId: teacherId }
-                    ]
+                    include: { user: { select: { id: true, fullName: true, avatarUrl: true } } }
+                },
+                messages: {
+                    orderBy: { createdAt: 'desc' },
+                    take: 1
                 }
             }
         });
-
         return chat;
+    }
+
+    const chat = await prisma.chat.create({
+        data: {
+            users: {
+                create: [
+                    { userId: observerId },
+                    { userId: teacherId }
+                ]
+            }
+        },
+        include: {
+            users: {
+                include: { user: { select: { id: true, fullName: true, avatarUrl: true } } }
+            },
+            messages: true
+        }
+    });
+
+    return chat;
+
     }
 
 

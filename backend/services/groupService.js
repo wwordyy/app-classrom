@@ -16,6 +16,19 @@ class GroupService{
                     name: true,
                     courseYear: true,
                     specialty: true,
+                    teacher: {
+                        select: {
+                            id: true,
+                            fullName: true,
+                            email: true,
+                        }
+                    },
+                    _count: {
+                        select: {
+                            students: true,
+                            posts: true,
+                        }
+                    }
                 }
             }
         )

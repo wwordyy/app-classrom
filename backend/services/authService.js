@@ -19,7 +19,6 @@ class AuthService {
 
         const hashedPswd = await bcrypt.hash(password, 10);
 
-        console.log("We're here")
         const user = await prisma.user.create({
             data: {
                 email: email,

@@ -29,12 +29,9 @@ class DashboardService {
 
         const groups = await prisma.group.findMany({
             select: {
-                id: true, 
+                id: true,
                 name: true,
-                users: {
-                    where: {
-                        role: { title: "student" }
-                    },
+                students: {   
                     select: {
                         id: true,
                         submissions: {
@@ -45,59 +42,49 @@ class DashboardService {
                     }
                 }
             }
-        })
+        });
 
         const result = groups.map(group => {
 
-            let total = 0
-            let submitted = 0
+            let total = 0;
+            let submitted = 0;
 
-            group.users.forEach(user => {
-                user.submissions.forEach(sub => {
+            group.students.forEach(student => {
+                student.submissions.forEach(sub => {
                     total++;
-                    if (sub.statusSubmission.title === "submitted"){
+                    if (sub.statusSubmission.title === "submitted") {
                         submitted++;
                     }
-
-                })
+                });
             });
-            
-            const percent = total === 0 ? 0 : Math.round((submitted / total) * 100);
+
+            const percent = total === 0
+                ? 0
+                : Math.round((submitted / total) * 100);
 
             return {
                 groupId: group.id,
                 groupName: group.name,
                 percent
             };
-        })
+        });
 
-        return result
-
+        return result;
     }
 
 
 
-    async getSubmissionStats() {
+   async getSubmissionStats() {
 
         const posts = await prisma.post.findMany({
             select: {
                 id: true,
                 dueDate: true,
-                stream: {
+                group: {
                     select: {
-                        groups: {
-                            select: {
-                                group: {
-                                    select: {
-                                        users: {
-                                            where: {
-                                                role: { title: "student" }
-                                            },
-                                            select: { id: true }
-                                        }
-                                    }
-                                }
-                            }
+                        students: {
+                            where: { role: { title: "student" } },
+                            select: { id: true }
                         }
                     }
                 }
@@ -128,8 +115,7 @@ class DashboardService {
 
         posts.forEach(post => {
 
-            const students = post.stream.groups
-                .flatMap(sg => sg.group.users);
+            const students = post.group.students;
 
             totalExpected += students.length;
 
@@ -139,7 +125,7 @@ class DashboardService {
                 const submission = submissionMap.get(key);
 
                 if (!submission) {
-                    late++; 
+                    late++;
                     return;
                 }
 
@@ -176,55 +162,33 @@ class DashboardService {
     }
 
     
-    async getGroupsOverview () {
+    async getGroupsOverview() {
+
         const groups = await prisma.group.findMany({
             select: {
                 id: true,
                 name: true,
                 courseYear: true,
-                users: {
-                    where: { role: {title: "student"} },
-                    select: { id: true}
-                },
-                streams: {
+                teacher: {   
                     select: {
-                        stream: {
-                            select: {
-                                teacher: {
-                                    select: {
-                                        id: true, 
-                                        fullName: true
-                                    }
-                                }
-                            }
-                        }
+                        id: true,
+                        fullName: true
                     }
+                },
+                students: {
+                    where: { role: { title: "student" } },
+                    select: { id: true }
                 }
             }
-
         });
 
-        return groups.map(group => {
-
-            const teachersMap = new Map();
-
-            group.streams.forEach(sg => {
-                const teacher = sg.stream.teacher;
-                teachersMap.set(teacher.id, teacher);
-
-            })
-
-            return {
-                id: group.id,
-                name: group.name,
-                courseYear: group.courseYear,
-                studentsCount: group.users.length,
-                teachers: Array.from(teachersMap.values())
-
-            }
-
-        })
-
+        return groups.map(group => ({
+            id: group.id,
+            name: group.name,
+            courseYear: group.courseYear,
+            studentsCount: group.students.length,
+            teacher: group.teacher   
+        }));
     }
 
 }
