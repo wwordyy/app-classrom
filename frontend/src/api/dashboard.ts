@@ -1,5 +1,5 @@
 import { type ResponseError} from '../types/types'
-import { type GroupStats, type GroupsOverview } from '../components/observer/types/observerTypes'
+import { type GroupStats, type GroupsOverview } from '../components/observer/dashboard/types'
 
 
 interface ResponseSucessOverview {
