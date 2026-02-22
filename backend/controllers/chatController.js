@@ -10,12 +10,12 @@ class ChatControler {
             const { teacherId } = req.body;
             const observerId = req.user.id;
 
-            const data = await chatService.createChat(teacherId, observerId);
+            const data = await chatService.createChat(Number(teacherId), observerId);
 
             return res.status(201).json(data);
 
         } catch (e) {
-
+            console.log(e.message);
             return res.status(400).json({
                 error: e.message
             })
@@ -53,7 +53,7 @@ class ChatControler {
 
         try {
 
-            const { chatId } = req.body;
+            const { chatId } = req.params;
             const userId = req.user.id;
 
             const messages = await chatService.getMessages(chatId, userId);
