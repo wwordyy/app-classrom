@@ -4,9 +4,9 @@ const express = require("express");
 const router = express.Router();
 
 
-const authMiddleware = require('../middleware/authMiddleware');
-const roleMiddleware = require('../middleware/roleMiddleware');
-const chatController = require('../controllers/chatController');
+const authMiddleware = require('../../middleware/authMiddleware');
+const roleMiddleware = require('../../middleware/roleMiddleware');
+const chatController = require('../../controllers/observer/chatController');
 
 
 router.post('/chats', authMiddleware, roleMiddleware(['observer']), chatController.createChat);
