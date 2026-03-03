@@ -1,6 +1,6 @@
 
 
-const dashboardService = require('../services/dashboardService')
+const dashboardService = require('../../services/observer/dashboardService')
 
 
 class DashboardController {
@@ -75,6 +75,21 @@ class DashboardController {
 
     }
 
+
+    async getTeachersStats(req, res) {
+
+    try {
+        const data = await dashboardService.getTeachersStats();
+
+        return res.status(200).json(data);
+        
+    } catch (e) {
+        return res.status(400).json({ 
+            error: e.message 
+        });
+    }
+
+}
 
 
 }

@@ -48,6 +48,24 @@ class UserController {
 
     }
 
+
+    async getFreeTeachers(req,res) {
+
+        try {
+
+            const teachers = await userService.getFreeTeachers();
+
+            return res.status(200).json(teachers);
+
+
+        } catch(e) {
+            return res.status(400).json({
+                error: e.message
+            })
+
+        }
+
+    }
 }
 
 
