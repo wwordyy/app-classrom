@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { apiLogout } from '../../api/auth/login'
+import { apiLogout } from '../api/auth/login'
+
 
 interface DashboardHeaderProps {
     namePage: string;
@@ -9,14 +10,18 @@ export function DashboardHeader ({ namePage }: DashboardHeaderProps) {
 
       const navigate = useNavigate();
 
-       async function handleLogout () {
+    async function handleLogout () {
       
         const ok =  await apiLogout()
       
           if (ok) {
             navigate('/login')
+            localStorage.clear();
         }  
-        }
+    }
+
+   
+    
 
 
     return (

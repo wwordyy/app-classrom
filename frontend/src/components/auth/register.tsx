@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import logoClassrom from '../../assets/icons/logoClassrom.png'
+import personIcon from '../../assets/icons/person.png'
 
 import { ApiRegister } from '../../api/auth/register'
 import { useNavigate } from 'react-router-dom';
@@ -49,7 +49,7 @@ export  function Register() {
             <div className="space-y-6 max-w-md pt-4">
             <div className="w-10 h-10  flex items-center 
                                         justify-center text-xl font-bold text-blue-500">
-                <img src={logoClassrom} alt="" />
+                <img src={personIcon} alt="" className=''/>
             </div>
             
             <h1 className="text-4xl font-medium text-white leading-tight">

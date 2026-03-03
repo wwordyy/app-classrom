@@ -2,9 +2,9 @@ import { useEffect, useState } from "react"
 import { GroupCardItem } from '../group/groupCardItem'
 import { type GroupsOverview } from '../group/types'
 
-import { apiGetGroupsOverview } from '../../../api/dashboard'
+import { apiGetGroupsOverview } from '../../../api/observer/dashboard'
 import { AsideBlock } from '../aside'
-import { DashboardHeader } from '../header'
+import { DashboardHeader } from '../../header'
 
 export function GroupsPage(){
 

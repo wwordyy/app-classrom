@@ -15,3 +15,11 @@ export interface GroupsOverview {
         fullName: string,
     }
 }
+
+export interface TeacherStat {
+    groupName: string;
+    teacherName: string;
+    studentsCount: number;
+    percentSubmitted: number;
+    avgGrade: number | null;
+}

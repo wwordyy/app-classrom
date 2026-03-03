@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { AsideBlock } from '../aside'
-import { DashboardHeader } from '../header'
+import { DashboardHeader } from '../../header'
+import { TeacherStats } from './teacherStats'
 
-import { apiGetOverview, apiGetGroupStats, apiGetSubmissionStats } from "../../../api/dashboard";
+import { apiGetOverview, apiGetGroupStats, apiGetSubmissionStats } from "../../../api/observer/dashboard";
 import { apiGetMe  } from '../../../api/user'
+import { apiDownloadReport } from '../../../api/observer/report'
 
-import { GroupsChart } from '../../observer/graphs/groupsChat'
+import { GroupsChart } from './groupsGraphs'
 
 import { type GroupStats} from '../dashboard/types'
 
@@ -52,6 +54,19 @@ export  function Dashboard() {
   }, []);
 
 
+    const handleDownloadReport = async () => {
+      
+
+      const blob = await apiDownloadReport();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'groups_report.xlsx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+  };
+
+
   return (
 
     <div className="min-h-screen bg-gray-100 flex">
@@ -95,39 +110,21 @@ export  function Dashboard() {
 
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow">
-          <h3 className="text-lg font-semibold mb-4">
-            Распределение групп по преподавателям
-          </h3>
+        <div className="bg-white p-6 rounded-2xl shadow ">
+          <div className="flex justify-between">
+            <h3 className="text-lg font-semibold mb-4">
+              Распределение групп по преподавателям
+            </h3>
 
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b">
-                <th className="py-3">Преподаватель</th>
-                <th className="py-3">Количество групп</th>
-                <th className="py-3">% сдачи</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b hover:bg-gray-50">
-                <td className="py-3">Иванов И.И.</td>
-                <td>3</td>
-                <td className="text-green-600 font-semibold">82%</td>
-              </tr>
+            <button className="text-sm bg-stone-100 rounded-lg px-4 
+              hover:cursor-pointer hover:bg-stone-200"
+              onClick={handleDownloadReport}>
+              Скачать отчет
+            </button>
+          </div>
 
-              <tr className="border-b hover:bg-gray-50">
-                <td className="py-3">Петров П.П.</td>
-                <td>2</td>
-                <td className="text-yellow-600 font-semibold">64%</td>
-              </tr>
+          <TeacherStats/>
 
-              <tr className="hover:bg-gray-50">
-                <td className="py-3">Сидоров С.С.</td>
-                <td>4</td>
-                <td className="text-red-600 font-semibold">40%</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
 
       </main>

@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { AsideBlock } from "../aside";
-import { DashboardHeader } from "../header";
+import { DashboardHeader } from "../../header";
 
 import { type User, type Message, type Chat} from './types'
-import { apiGetChats, apiGetMessages, apiSendMessage, apiCreateChat } from '../../../api/chat'
+import { apiGetChats, apiGetMessages, apiSendMessage, apiCreateChat } from '../../../api/observer/chat'
 import { apiGetMe, apiGetUsersByRole } from '../../../api/user'
 
 
@@ -101,7 +101,6 @@ export function ChatsPage() {
 
         <div className="bg-white rounded-2xl shadow flex overflow-hidden" style={{ height: "75vh" }}>
           
-          {/* Левая панель — список чатов */}
           <div className="w-72  flex flex-col bg-stone-200">
             <div className="p-4  ">
               <button
