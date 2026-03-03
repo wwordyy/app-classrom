@@ -1,5 +1,5 @@
-import { type ResponseError} from '../types/types'
-import { type GroupStats, type GroupsOverview } from '../components/observer/dashboard/types'
+import { type ResponseError} from '../../types/types'
+import { type GroupStats, type GroupsOverview, type TeacherStat } from '../../components/observer/dashboard/types'
 
 
 interface ResponseSucessOverview {
@@ -90,6 +90,25 @@ export async function apiGetGroupsOverview() {
     }
 
     return (responseData as GroupsOverview[]);
+
+    
+}
+
+
+export async function apiGetTeacherStats() {
+
+    const response = await fetch(`${URL_BACKEND}/teachers-stats`, { 
+        method: "GET",
+        credentials: 'include' 
+    });
+
+    const responseData: TeacherStat[] | ResponseError = await response.json();
+
+    if (!response.ok) {
+        throw new Error((responseData as ResponseError).error || "Ошибка получения данных!")
+    }
+
+    return (responseData as TeacherStat[]);
 
     
 }

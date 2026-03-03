@@ -41,3 +41,21 @@ export async function apiGetUsersByRole(role: string) {
 
 
 }
+
+export async function apiGetFreeTeachers() {
+    
+    const response = await fetch("/api/users/free-teachers", { 
+        method: 'GET',
+        credentials: "include" 
+    });
+
+    const responseData: User[] | ResponseError = await response.json();
+
+    if (!response.ok) {
+        throw new Error((responseData as ResponseError).error || "Ошибка получения данных!")
+    }
+
+    return (responseData as User[]);
+
+    
+}

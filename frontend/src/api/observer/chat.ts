@@ -1,5 +1,5 @@
-import { type Chat, type Message } from '../components/observer/chats/types'
-import { type ResponseError } from '../types/types'
+import { type Chat, type Message } from '../../components/observer/chats/types'
+import { type ResponseError } from '../../types/types'
 
 
 
