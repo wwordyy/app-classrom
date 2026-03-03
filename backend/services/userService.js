@@ -50,6 +50,29 @@ class UserService {
         return users;
 
     }
+
+
+    async getFreeTeachers() {
+
+        console.log("We're here")
+
+        const teachers = await prisma.user.findMany({
+            where: {
+                role: { title: "teacher" },
+                teachingGroups: { none: {} }
+            },
+            select: {
+                id: true,
+                fullName: true,
+                email: true,
+                avatarUrl: true,
+            }
+
+        })
+
+        return teachers;
+
+    }
 }
 
 

@@ -26,7 +26,7 @@ class AuthService {
                 fullName: fullName,
                 isActive: true,
                 role: {
-                    connect: { title: "observer" }
+                    connect: { title: "admin" }
                 }
             }
 

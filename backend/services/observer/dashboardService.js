@@ -1,6 +1,6 @@
 
 
-const prisma = require('../prisma/client')
+const prisma = require('../../prisma/client')
 
 
 class DashboardService {
@@ -52,8 +52,8 @@ class DashboardService {
             group.students.forEach(student => {
                 student.submissions.forEach(sub => {
                     total++;
-                    if (sub.statusSubmission.title === "submitted") {
-                        submitted++;
+                    if (sub.statusSubmission.title === "submitted" || sub.statusSubmission.title === "graded") {
+                            submitted++;
                     }
                 });
             });
@@ -129,7 +129,7 @@ class DashboardService {
                     return;
                 }
 
-                if (submission.statusSubmission.title !== "submitted") {
+             if (submission.statusSubmission.title !== "submitted" && submission.statusSubmission.title !== "graded") {
                     late++;
                     return;
                 }
@@ -190,6 +190,55 @@ class DashboardService {
             teacher: group.teacher   
         }));
     }
+
+
+    async getTeachersStats() {
+        const groups = await prisma.group.findMany({
+            include: {
+                teacher: {
+                    select: { id: true, fullName: true }
+                },
+                posts: {
+                    include: {
+                        submissions: {
+                            include: {
+                                statusSubmission: true
+                            }
+                        }
+                    }
+                },
+                students: {
+                    select: { id: true }
+                }
+            }
+        });
+
+        return groups.map(group => {
+
+            const totalSubmissions = group.posts.flatMap(p => p.submissions);
+            const graded = totalSubmissions.filter(s => s.grade !== null);
+            const submitted = totalSubmissions.filter(s => 
+                s.statusSubmission.title === 'submitted' || 
+                s.statusSubmission.title === 'graded'
+            );
+
+            const avgGrade = graded.length > 0
+                ? parseFloat((graded.reduce((sum, s) => sum + s.grade, 0) / graded.length).toFixed(1))
+                : null;
+
+            const percentSubmitted = totalSubmissions.length > 0
+                ? Math.round((submitted.length / totalSubmissions.length) * 100)
+                : 0;
+
+            return {
+                groupName: group.name,
+                teacherName: group.teacher?.fullName ?? 'Не назначен',
+                studentsCount: group.students.length,
+                percentSubmitted,
+                avgGrade,
+            };
+    });
+}
 
 }
 
