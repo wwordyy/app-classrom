@@ -1,6 +1,5 @@
 
 
-const authService = require('../services/authService');
 const { verifyRememberToken } = require('../util/tokens');
 
 
@@ -11,7 +10,7 @@ const authMiddleware = async (req, res, next) => {
                             : req.cookies.accessToken;
 
     if (!token) {
-        return req.status(401).json({
+        return res.status(401).json({
             error: "Необходимо авторизоваться!"
         });
     }
