@@ -10,6 +10,7 @@ export function AsideBlock() {
         <nav className="space-y-4">
           <a href="/observer/main" className="block text-gray-700 hover:text-blue-600">Главная</a>
           <a href="/observer/groups" className="block text-gray-700 hover:text-blue-600">Группы</a>
+          <a href="/observer/profile" className="block text-gray-700 hover:text-blue-600">Профиль</a>
           <a href="/observer/chats" className="block text-gray-700 hover:text-blue-600">Чаты</a>
         </nav>
       </aside>
