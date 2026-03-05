@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const REMEMBER_JWT_SECRET = process.REMEMBER_JWT_SECRET;
+const REMEMBER_JWT_SECRET = process.env.REMEMBER_JWT_SECRET;
 
 const generatedRememberToken = (payload) => {
 
