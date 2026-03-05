@@ -25,8 +25,9 @@ app.use('/api', require('./routers/shared/postCommentRouter'));
 //observer
 app.use('/api', require('./routers/observer/dashboardRouter'));
 app.use('/api', require('./routers/observer/groupRouter'));
-app.use('/api', require('./routers/observer/chatRouter'));
+app.use('/api', require('./routers/shared/chatRouter'));
 app.use('/api', require('./routers/observer/reportRouter'));
+app.use('/api', require('./routers/observer/profileRouter'));
 
 
 //admin
@@ -38,6 +39,7 @@ app.use('/api/admin/groups', require('./routers/admin/groupRouter'));
 // student
 app.use('/api/student', require('./routers/student/postRouter'));
 app.use('/api/student', require('./routers/student/practiceRouter'));
+app.use('/api/student', require('./routers/student/profileRouter'));
 
 // teacher
 app.use('/api', require('./routers/teacher/teacherRouter'));
