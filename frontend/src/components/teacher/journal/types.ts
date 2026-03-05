@@ -2,6 +2,7 @@ export type JournalStudent = {
     id: number;
     fullName: string;
     email: string;
+    avatarUrl?: string;
 }
 
 export type JournalStudentList = {

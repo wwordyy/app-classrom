@@ -17,6 +17,13 @@ export function TeacherAside() {
             <a href="/teacher/journal" className="block text-gray-700 hover:text-black">
               Журнал
             </a>
+             <a href="/teacher/profile" className="block text-gray-700 hover:text-black">
+              Профиль
+            </a>
+            <a href="/teacher/chats" className="block text-gray-700 hover:text-black">
+              Чаты
+            </a>
+
       </nav>
     </aside>
   );

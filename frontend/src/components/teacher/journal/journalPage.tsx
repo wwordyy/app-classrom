@@ -36,10 +36,25 @@ export function TeacherJournalPage() {
                                 onClick={() => navigate(`/teacher/journal/${student.id}`)}
                                 className="bg-white shadow rounded-lg p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition animation-card"
                             >
-                                <div>
-                                    <p className="font-semibold">{student.fullName}</p>
-                                    <p className="text-sm text-gray-500">{student.email}</p>
+                                <div className="flex items-center gap-4">
+                                    {student.avatarUrl ? (
+                                        <img
+                                            src={student.avatarUrl}
+                                            alt={student.fullName}
+                                            className="w-12 h-12 rounded-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+                                            {student.fullName.charAt(0)}
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <p className="font-semibold">{student.fullName}</p>
+                                        <p className="text-sm text-gray-500">{student.email}</p>
+                                    </div>
                                 </div>
+
                                 <span className="text-gray-400 text-xl">{"->"}</span>
                             </div>
                         ))
