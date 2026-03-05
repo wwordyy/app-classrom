@@ -1,5 +1,5 @@
 
-const chatService = require('../../services/observer/chatService');
+const chatService = require('../../services/shared/chatService');
 
 
 class ChatControler {
