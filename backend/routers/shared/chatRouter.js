@@ -6,7 +6,7 @@ const router = express.Router();
 
 const authMiddleware = require('../../middleware/authMiddleware');
 const roleMiddleware = require('../../middleware/roleMiddleware');
-const chatController = require('../../controllers/observer/chatController');
+const chatController = require('../../controllers/shared/chatController');
 
 
 router.post('/chats', authMiddleware, roleMiddleware(['observer']), chatController.createChat);

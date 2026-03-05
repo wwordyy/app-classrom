@@ -8,6 +8,7 @@ const postController = require('../../controllers/teacher/postController');
 const submissionController = require('../../controllers/teacher/submissionController');
 const journalController = require('../../controllers/teacher/journalController');
 const practiceResultController = require('../../controllers/teacher/practiceResultController');
+const profileController = require('../../controllers/teacher/profileController');
 
 const authMiddleware = require ('../../middleware/authMiddleware');
 const roleMiddleware = require('../../middleware/roleMiddleware');
@@ -18,6 +19,8 @@ router.use(authMiddleware, roleMiddleware(['teacher']));
 
 
 router.get('/teacher/dashboard', teacherController.getTeacherDashboard);
+
+router.get('/teacher/profile', profileController.getProfile);
 
 router.post('/teacher/posts', upload.single('file'), postController.createPost);
 
