@@ -1,3 +1,17 @@
 node_modules
 
 .env
+/generated/prisma
+
+/generated/prisma
+
+
+/uploads/posts/*
+/!uploads/posts/
+
+/uploads/avatars/*
+/!uploads/avatars/
+
+/uploads/merged/*
+/!uploads/merged/
+
