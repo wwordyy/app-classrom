@@ -10,7 +10,7 @@ class JournalService {
             where: { teacherId },
             include: {
                 students: {
-                    select: { id: true, fullName: true, email: true }
+                    select: { id: true, fullName: true, email: true, avatarUrl: true }
                 }
             }
         });
