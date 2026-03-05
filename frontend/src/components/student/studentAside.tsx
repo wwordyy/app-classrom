@@ -13,6 +13,15 @@ export function StudentAside() {
                 <a href="/student/practice" className="block text-gray-700 hover:text-black">
                 Практика
                 </a>
+
+                <a href="/student/profile" className="block text-gray-700 hover:text-black">
+                Профиль
+                </a>
+                
+                <a href="/student/chats" className="block text-gray-700 hover:text-black">
+                    Чаты
+                </a>
+                
                 
         </nav>
         </aside>
