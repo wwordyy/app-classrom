@@ -1,5 +1,10 @@
+
 const prisma = require('./client');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+
+function randGrade(min = 2, max = 5) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 async function main() {
 
@@ -154,49 +159,38 @@ async function main() {
         studentsG2.push(user);
     }
 
-    const post1g1 = await prisma.post.upsert({
-        where: { id: 1 },
-        update: {},
-        create: {
-            title: 'Введение в практику',
-            content: 'Ознакомьтесь с местом прохождения практики и напишите отчёт.',
-            dueDate: new Date('2024-10-01'),
-            maxScore: 10,
-            groupId: group1.id,
-            typePostId: T['Задание'],
-        },
-    }).catch(() => prisma.post.create({
+    await prisma.post.create({
         data: {
             title: 'Введение в практику',
             content: 'Ознакомьтесь с местом прохождения практики и напишите отчёт.',
             dueDate: new Date('2024-10-01'),
-            maxScore: 10,
+            maxScore: 5,
             groupId: group1.id,
             typePostId: T['Задание'],
         },
-    }));
+    }).catch(() => {});
 
-    const post2g1 = await prisma.post.create({
+    await prisma.post.create({
         data: {
             title: 'Анализ предметной области',
             content: 'Проведите анализ предметной области вашего проекта.',
             dueDate: new Date('2024-10-15'),
-            maxScore: 20,
+            maxScore: 5,
             groupId: group1.id,
             typePostId: T['Задание'],
         },
-    }).catch(() => null);
+    }).catch(() => {});
 
-    const post3g1 = await prisma.post.create({
+    await prisma.post.create({
         data: {
             title: 'Методические указания',
             content: 'Изучите методические указания по прохождению практики.',
             groupId: group1.id,
             typePostId: T['Методический материал'],
         },
-    }).catch(() => null);
+    }).catch(() => {});
 
-    const post4g1 = await prisma.post.create({
+    await prisma.post.create({
         data: {
             title: 'Дневник практики',
             content: 'Заполняйте дневник практики каждую неделю.',
@@ -209,29 +203,29 @@ async function main() {
                 { week: 4, goal: 'Подготовка отчётных материалов' },
             ],
         },
-    }).catch(() => null);
+    }).catch(() => {});
 
-    const post1g2 = await prisma.post.create({
+    await prisma.post.create({
         data: {
             title: 'Отчёт по первой неделе',
             content: 'Опишите чем вы занимались на первой неделе практики.',
             dueDate: new Date('2024-10-07'),
-            maxScore: 15,
+            maxScore: 5,
             groupId: group2.id,
             typePostId: T['Задание'],
         },
-    }).catch(() => null);
+    }).catch(() => {});
 
-    const post2g2 = await prisma.post.create({
+    await prisma.post.create({
         data: {
             title: 'Техническое задание',
             content: 'Составьте техническое задание для вашего проекта.',
             dueDate: new Date('2024-10-20'),
-            maxScore: 25,
+            maxScore: 5,
             groupId: group2.id,
             typePostId: T['Задание'],
         },
-    }).catch(() => null);
+    }).catch(() => {});
 
     const postsG1 = await prisma.post.findMany({ where: { groupId: group1.id }, orderBy: { id: 'asc' } });
     const postsG2 = await prisma.post.findMany({ where: { groupId: group2.id }, orderBy: { id: 'asc' } });
@@ -239,13 +233,14 @@ async function main() {
     const taskPostsG1 = postsG1.filter(p => p.typePostId === T['Задание']);
     const taskPostsG2 = postsG2.filter(p => p.typePostId === T['Задание']);
 
+
     for (const post of taskPostsG1) {
         await prisma.submission.create({ data: {
             postId: post.id, userId: studentsG1[0].id,
             fileUrl: '/uploads/posts/sample.pdf',
             submittedAt: new Date('2024-09-28'),
             statusSubmissionId: S['Проверено'],
-            grade: Math.floor(post.maxScore * 0.9),
+            grade: randGrade(4, 5),
             feedBackTeacher: 'Отлично, хорошая работа!',
         }}).catch(() => {});
     }
@@ -265,11 +260,10 @@ async function main() {
             fileUrl: '/uploads/posts/sample.pdf',
             submittedAt: new Date('2024-10-01'),
             statusSubmissionId: S['Проверено'],
-            grade: Math.floor(taskPostsG1[0].maxScore * 0.6),
+            grade: 3,
             feedBackTeacher: 'Нужно доработать некоторые разделы.',
         }}).catch(() => {});
     }
-
     for (const post of taskPostsG1.slice(1)) {
         await prisma.submission.create({ data: {
             postId: post.id, userId: studentsG1[2].id,
@@ -290,10 +284,11 @@ async function main() {
             fileUrl: '/uploads/posts/sample.pdf',
             submittedAt: new Date('2024-10-05'),
             statusSubmissionId: S['Проверено'],
-            grade: Math.floor(post.maxScore * 0.5),
+            grade: randGrade(2, 3),
             feedBackTeacher: 'Требует значительной доработки.',
         }}).catch(() => {});
     }
+
 
     for (const post of taskPostsG2) {
         await prisma.submission.create({ data: {
@@ -301,7 +296,7 @@ async function main() {
             fileUrl: '/uploads/posts/sample.pdf',
             submittedAt: new Date('2024-10-05'),
             statusSubmissionId: S['Проверено'],
-            grade: Math.floor(post.maxScore * 0.85),
+            grade: randGrade(4, 5),
             feedBackTeacher: 'Хорошая работа!',
         }}).catch(() => {});
     }
@@ -315,6 +310,7 @@ async function main() {
         }}).catch(() => {});
     }
 
+    // Студент 3 г2 — не сдал
     for (const post of taskPostsG2) {
         await prisma.submission.create({ data: {
             postId: post.id, userId: studentsG2[2].id,
@@ -328,9 +324,16 @@ async function main() {
             fileUrl: '/uploads/posts/sample.pdf',
             submittedAt: new Date('2024-10-07'),
             statusSubmissionId: S['Проверено'],
-            grade: Math.floor(taskPostsG2[0].maxScore * 0.7),
+            grade: 3,
         }}).catch(() => {});
     }
+    if (taskPostsG2[1]) {
+        await prisma.submission.create({ data: {
+            postId: taskPostsG2[1].id, userId: studentsG2[3].id,
+            statusSubmissionId: S['Не отправлено'],
+        }}).catch(() => {});
+    }
+
 
     const practiceData = [
         { student: studentsG1[0], grade: 5, comment: 'Отличная работа на протяжении всей практики' },
@@ -355,6 +358,7 @@ async function main() {
         comment: 'Выдающийся результат',
     }}).catch(() => {});
 
+    // ── Чаты ──────────────────────────────────────────────────────────
     const chat1 = await prisma.chat.create({
         data: {
             users: { create: [{ userId: teacher1.id }, { userId: observer.id }] },
@@ -379,11 +383,11 @@ async function main() {
     console.log('✅ Seed выполнен успешно');
     console.log('');
     console.log('Логины (пароль у всех: 123123)');
-    console.log('  Наблюдатель: observer@test.com');
-    console.log('  Преподаватель 1: teacher1@test.com');
-    console.log('  Преподаватель 2: teacher2@test.com');
-    console.log('  Студенты г.1: s1g1@test.com ... s5g1@test.com');
-    console.log('  Студенты г.2: s1g2@test.com ... s4g2@test.com');
+    console.log('  Наблюдатель:      observer@test.com');
+    console.log('  Преподаватель 1:  teacher1@test.com  (группа ИС-21)');
+    console.log('  Преподаватель 2:  teacher2@test.com  (группа ПР-22)');
+    console.log('  Студенты г.1:     s1g1@test.com ... s5g1@test.com');
+    console.log('  Студенты г.2:     s1g2@test.com ... s4g2@test.com');
 }
 
 main()
