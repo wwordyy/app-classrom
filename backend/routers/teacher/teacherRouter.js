@@ -2,6 +2,7 @@
 
 const express = require("express");
 const router = express.Router();
+const prisma = require('../../prisma/client')
 
 const teacherController = require ('../../controllers/teacher/teacherController');
 const postController = require('../../controllers/teacher/postController');
@@ -44,6 +45,26 @@ router.get('/teacher/journal/:studentId', journalController.getStudentGrades);
 router.get('/teacher/groups/:groupId/practice-results', practiceResultController.getResults);
 
 router.post('/teacher/groups/:groupId/students/:studentId/practice-result', practiceResultController.upsertResult);
+
+
+router.get('/teacher/my-students', async (req, res) => {
+    try {
+
+        const group = await prisma.group.findFirst({
+            where: { teacherId: req.user.id },
+            include: {
+                students: {
+                    select: { id: true, fullName: true, avatarUrl: true }
+                }
+            }
+        });
+
+        
+        return res.json(group?.students ?? []);
+    } catch (e) {
+        return res.status(400).json({ error: e.message });
+    }
+});
 
                     
 
