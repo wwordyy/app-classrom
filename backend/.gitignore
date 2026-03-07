@@ -6,12 +6,5 @@ node_modules
 /generated/prisma
 /prisma/migrations
 
-/uploads/posts/*
-/!uploads/posts/
 
-/uploads/avatars/*
-/!uploads/avatars/
-
-/uploads/merged/*
-/!uploads/merged/
 
