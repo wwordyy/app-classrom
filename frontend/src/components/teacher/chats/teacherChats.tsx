@@ -7,6 +7,7 @@ import {
     apiTeacherGetMessages,
     apiTeacherSendMessage,
     apiTeacherCreateChat,
+    apiTeacherGetMyStudents
 } from '../../../api/teacher/chat';
 import { apiGetMe, apiGetUsersByRole } from '../../../api/user';
 
@@ -46,7 +47,7 @@ export function TeacherChatsPage() {
     useEffect(() => {
         fetchChats();
         apiGetMe().then(me => setCurrentUserId(me.id));
-        apiGetUsersByRole('student').then(setStudents).catch(() => {});
+        apiTeacherGetMyStudents().then(setStudents).catch(() => {});
         apiGetUsersByRole('observer').then(setObservers).catch(() => {});
     }, []);
 
