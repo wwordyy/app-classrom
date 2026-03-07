@@ -1,4 +1,4 @@
-import { type Chat, type Message } from '../../components/observer/chats/types';
+import { type Chat, type Message, type User} from '../../components/observer/chats/types';
 
 
 
@@ -52,5 +52,14 @@ export async function apiTeacherCreateChat(observerId: number): Promise<Chat> {
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.error ?? 'Ошибка создания чата');
+    return data;
+}
+
+export async function apiTeacherGetMyStudents(): Promise<User[]> {
+
+    const res = await fetch('/api/teacher/my-students', { credentials: 'include' });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? 'Ошибка');
     return data;
 }
