@@ -4,27 +4,26 @@ const chatService = require('../../services/shared/chatService');
 
 class ChatControler {
 
-    async createChat(req, res) {
+        async createChat(req, res) {
+            try {
+                const currentUserId = req.user.id;
 
-        try {
-            const { teacherId } = req.body;
-            const observerId = req.user.id;
+                const companionId = req.body.teacherId 
+                    ?? req.body.observerId 
+                    ?? req.body.studentId 
+                    ?? req.body.userId;
 
-            const data = await chatService.createChat(Number(teacherId), observerId);
+                if (!companionId) {
+                    return res.status(400).json({ error: 'Не указан собеседник' });
+                }
 
-            return res.status(201).json(data);
-
-        } catch (e) {
-            console.log(e.message);
-            return res.status(400).json({
-                error: e.message
-            })
-
+                const data = await chatService.createChat(currentUserId, Number(companionId));
+                
+                return res.status(201).json(data);
+            } catch (e) {
+                return res.status(400).json({ error: e.message });
+            }
         }
-
-
-
-    }
 
 
     async getChats (req, res) {
