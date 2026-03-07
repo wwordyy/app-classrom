@@ -12,6 +12,46 @@ const userSelect = {
     studentGroup: { select: { id: true, name: true } },
 };
 
+async function createMissingSubmissions(userId, groupId) {
+    const STATUS_NOT_SUBMITTED = await prisma.statusSubmission.findFirst({
+        where: { title: 'Не отправлено' },
+        select: { id: true },
+    });
+
+    if (!STATUS_NOT_SUBMITTED) return;
+
+    const posts = await prisma.post.findMany({
+        where: {
+            groupId,
+            typePost: {
+                title: { in: ['Задание', 'Итоговая практика'] }
+            },
+        },
+        select: { id: true },
+    });
+
+    if (posts.length === 0) return;
+
+    const existing = await prisma.submission.findMany({
+        where: { userId, postId: { in: posts.map(p => p.id) } },
+        select: { postId: true },
+    });
+
+    const existingPostIds = new Set(existing.map(s => s.postId));
+
+    const toCreate = posts
+        .filter(p => !existingPostIds.has(p.id))
+        .map(p => ({
+            postId: p.id,
+            userId,
+            statusSubmissionId: STATUS_NOT_SUBMITTED.id,
+        }));
+
+    if (toCreate.length > 0) {
+        await prisma.submission.createMany({ data: toCreate });
+    }
+}
+
 class UserService {
 
     async getAll({ page, limit, search, roleId, groupId }) {
@@ -19,14 +59,12 @@ class UserService {
 
         const where = {
             AND: [
-                search
-                        ? {
-                            OR: [
-                                { fullName: { contains: search, mode: "insensitive" } },
-                                { email: { contains: search, mode: "insensitive" } },
-                            ],
-                        }
-                    : {},
+                search ? {
+                    OR: [
+                        { fullName: { contains: search, mode: "insensitive" } },
+                        { email:    { contains: search, mode: "insensitive" } },
+                    ],
+                } : {},
                 roleId ? { roleId } : {},
                 groupId !== undefined
                     ? groupId === "null"
@@ -50,8 +88,6 @@ class UserService {
         return { data, total, page, limit };
     }
 
-
-
     async getById(id) {
         const user = await prisma.user.findUnique({
             where: { id },
@@ -65,12 +101,8 @@ class UserService {
         return user;
     }
 
-
-
     async create({ email, password, fullName, avatarUrl, isActive = true, roleId, groupId }) {
-
         const existing = await prisma.user.findUnique({ where: { email } });
-
         if (existing) throw new Error("Пользователь с таким email уже существует");
 
         const passwordHash = await bcrypt.hash(password, 10);
@@ -82,19 +114,24 @@ class UserService {
                 fullName,
                 avatarUrl: avatarUrl || null,
                 isActive,
-                roleId: Number(roleId),
+                roleId:  Number(roleId),
                 groupId: groupId ? Number(groupId) : null,
             },
             select: userSelect,
         });
 
+        if (groupId) {
+            const role = await prisma.role.findUnique({ where: { id: Number(roleId) }, select: { title: true } });
+            if (role?.title === 'student') {
+                await createMissingSubmissions(user.id, Number(groupId));
+            }
+        }
+
         return user;
     }
 
     async update(id, { email, password, fullName, avatarUrl, isActive, roleId, groupId }) {
-
         const existing = await prisma.user.findUnique({ where: { id } });
-
         if (!existing) throw new Error("Пользователь не найден");
 
         if (email && email !== existing.email) {
@@ -103,12 +140,12 @@ class UserService {
         }
 
         const data = {};
-        if (email !== undefined) data.email = email;
-        if (fullName !== undefined) data.fullName = fullName;
+        if (email     !== undefined) data.email     = email;
+        if (fullName  !== undefined) data.fullName  = fullName;
         if (avatarUrl !== undefined) data.avatarUrl = avatarUrl;
-        if (isActive !== undefined) data.isActive = isActive;
-        if (roleId !== undefined) data.roleId = Number(roleId);
-        if (groupId !== undefined) data.groupId = groupId ? Number(groupId) : null;
+        if (isActive  !== undefined) data.isActive  = isActive;
+        if (roleId    !== undefined) data.roleId    = Number(roleId);
+        if (groupId   !== undefined) data.groupId   = groupId ? Number(groupId) : null;
         if (password) data.passwordHash = await bcrypt.hash(password, 10);
 
         const user = await prisma.user.update({
@@ -117,22 +154,28 @@ class UserService {
             select: userSelect,
         });
 
+        const newGroupId = groupId ? Number(groupId) : null;
+        const groupChanged = newGroupId && newGroupId !== existing.groupId;
+
+        if (groupChanged) {
+            const effectiveRoleId = roleId ? Number(roleId) : existing.roleId;
+            const role = await prisma.role.findUnique({ where: { id: effectiveRoleId }, select: { title: true } });
+            if (role?.title === 'student') {
+                await createMissingSubmissions(id, newGroupId);
+            }
+        }
+
         return user;
     }
 
     async remove(id) {
-
         const existing = await prisma.user.findUnique({ where: { id } });
-
         if (!existing) throw new Error("Пользователь не найден");
-
         await prisma.user.delete({ where: { id } });
     }
 
     async toggleActive(id) {
-
         const user = await prisma.user.findUnique({ where: { id }, select: { isActive: true } });
-
         if (!user) throw new Error("Пользователь не найден");
 
         return prisma.user.update({
