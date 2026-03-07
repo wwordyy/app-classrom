@@ -130,21 +130,3 @@ npm run dev
 После запуска frontend откройте в браузере:
 
     http://localhost:5173/
-
-------------------------------------------------------------------------
-
-# Структура проекта
-
-    app-classrom
-    │
-    ├ backend
-    │  ├ uploads
-    │  │  ├ avatars
-    │  │  ├ merged
-    │  │  └ posts
-    │  ├ prisma
-    │  ├ server.js
-    │  └ .env
-    │
-    └ frontend
-       └ src
